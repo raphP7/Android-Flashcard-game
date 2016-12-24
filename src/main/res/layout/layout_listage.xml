@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:id="@+id/fragmentListCard"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/buttonCREATE"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CREATE NEW" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@android:color/darker_gray"/>
+
+        <Button
+            android:id="@+id/buttonEDIT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EDIT SELECTED" />
+
+        <Button
+            android:id="@+id/buttonDELETE"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DELETE" />
+
+
+
+
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:clickable="true"
+        android:id="@+id/listageList" />
+
+
+
+</LinearLayout>

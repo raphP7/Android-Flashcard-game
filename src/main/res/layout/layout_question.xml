@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:id="@+id/fragmentQuestion"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:text="QUESTION"
+        android:textSize="50sp"
+
+        />
+
+    <TextView
+        android:id="@+id/THEquestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:gravity="center"
+        android:text="LA QUESTION"
+        android:textSize="30sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@android:color/darker_gray" />
+
+    <Button
+        android:gravity="center"
+        android:id="@+id/voirReponse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:text="voir reponse"
+
+        />
+
+</LinearLayout>

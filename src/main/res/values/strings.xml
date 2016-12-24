@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">APPRENDRE</string>
+    <string name="authority">com.auvert.raphaela.DeckContentProvider</string>
+    <string-array name="menu_array">
+        <item>Select Deck</item>
+        <item>Edit Cards</item>
+        <item>PLAY</item>
+        <item>Download Game</item>
+        <item>Reglages</item>
+    </string-array>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Web search</string>
+    <string name="app_not_available">Sorry, there\'s no web browser available</string>
+</resources>
