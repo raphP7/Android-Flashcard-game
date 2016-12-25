@@ -30,26 +30,28 @@ public class Telecharger extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        View rootView = inflater.inflate(R.layout.layout_newvalue, container, false);
+        View rootView = inflater.inflate(R.layout.layout_newdeck, container, false);
 
-        Button newValueButton= (Button) rootView.findViewById(R.id.newValueButton);
-        TextView newValueTxt= (TextView) rootView.findViewById(R.id.newValueTxt);
-        EditText newValueEnter= (EditText) rootView.findViewById(R.id.newValueEnter);
+        Button newValueButton= (Button) rootView.findViewById(R.id.newDeckValueButton);
+        TextView newValueTxt= (TextView) rootView.findViewById(R.id.newDeckValueTxt);
+        EditText newValueEnter= (EditText) rootView.findViewById(R.id.newDeckValueEnter);
 
         newValueButton.setText(stringValueButton);
         newValueTxt.setText(stringValueTxt);
-        newValueEnter.setText(stringValueEnter);
+        newValueEnter.setHint(stringValueEnter);
 
 
         newValueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("DANS onclick download");
+                doDownload(v);
             }
         });
 
         return rootView;
     }
-
+    public void doDownload(View view) {
+        
+    }
 
 }

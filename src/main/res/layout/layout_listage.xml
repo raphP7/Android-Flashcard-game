@@ -5,49 +5,72 @@
     android:id="@+id/fragmentListCard"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="10"
+    >
 
-
-    <LinearLayout
+    <ScrollView
+        android:layout_weight="1"
+        android:id="@+id/scrollListButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        >
 
-        <Button
-            android:id="@+id/buttonCREATE"
+
+        <LinearLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CREATE NEW" />
+            android:orientation="vertical"
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@android:color/darker_gray"/>
+            >
 
-        <Button
-            android:id="@+id/buttonEDIT"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="EDIT SELECTED" />
+            <Button
+                android:id="@+id/buttonCREATE"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CREATE NEW" />
 
-        <Button
-            android:id="@+id/buttonDELETE"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="DELETE" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@android:color/darker_gray" />
+
+            <Button
+                android:id="@+id/buttonEDIT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="EDIT SELECTED" />
+
+            <Button
+                android:id="@+id/buttonDELETE"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DELETE" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@android:color/darker_gray" />
+
+            <Button
+                android:id="@+id/buttonDEFINE"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="JOUER AVEC CE DECK" />
 
 
-
-
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
     <ListView
+        android:layout_weight="5"
+        android:id="@+id/listageList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
-        android:clickable="true"
-        android:id="@+id/listageList" />
-
-
+        android:choiceMode="multipleChoice"
+        android:clickable="true" />
 
 </LinearLayout>

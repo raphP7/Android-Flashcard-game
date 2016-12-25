@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+    <CheckBoxPreference
+        android:id="@+id/checkBoxTime"
+        android:key="checkBoxTime"
+        android:title="LIMITE DE TEMPS"
+        android:summaryOn="time limit activate"
+        android:summaryOff="time limit disable"
+        android:defaultValue="false"/>
+
+    <EditTextPreference
+        android:key="editTextTime"
+        android:id="@+id/timeValue"
+        android:dialogTitle="Definir limite de temps"
+        android:positiveButtonText="Valider"
+        android:negativeButtonText="Annuler"
+        android:title="Choisir limite de temps"
+        android:summary="secondes"
+        android:inputType="number"
+        android:singleLine="true"
+        android:dependency="checkBoxTime" />
+
+</PreferenceScreen>

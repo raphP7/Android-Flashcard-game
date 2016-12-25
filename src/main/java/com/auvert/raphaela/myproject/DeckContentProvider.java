@@ -33,7 +33,7 @@ public class DeckContentProvider extends ContentProvider {
         matcher.addURI(authority, "deck/title", DECK_TITLE);
         matcher.addURI(authority, "card_table/#", ONE_CARD);
         matcher.addURI(authority, "deck_table/#", ONE_DECK);
-        matcher.addURI(authority, "book_table/author/#", CARDS_OF_ONE_DECK);
+        matcher.addURI(authority, "card_table/deck/#", CARDS_OF_ONE_DECK);
     }
 
     public DeckContentProvider() {
@@ -84,7 +84,7 @@ public class DeckContentProvider extends ContentProvider {
 
         switch (code) {
             case DECK:
-                id = db.insert("deck_table", null, values);
+                id = db.insertOrThrow("deck_table", null, values);
                 builder.appendPath("deck_table");
                 break;
             case CARD:
@@ -131,8 +131,12 @@ public class DeckContentProvider extends ContentProvider {
                 break;
             case CARDS_OF_ONE_DECK:
                 long id = ContentUris.parseId(uri);
-                cursor = db.query("deck_table", new String[]{"_id", "title"},
-                        "author_id = " + id, null, null, null, null);
+                Log.d(" DANS DB ->  ",""+id);
+
+                cursor = db.query("card_table", new String[]{"_id", "title","question","reponse"},
+                        selection, selectionArgs, null, null, null);
+
+
                 break;
             default:
                 Log.d("Uri provider =", uri.toString());
@@ -145,7 +149,26 @@ public class DeckContentProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+
+
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+        int code = matcher.match(uri);
+        int i;
+        long id;
+        Log.d(LOG, "UPDATE uri=" + uri.toString());
+        switch (code) {
+            case ONE_CARD:
+                id = ContentUris.parseId(uri);
+                i=db.update("card_table",values," _id ="+id ,null);
+                break;
+            case ONE_DECK:
+                id = ContentUris.parseId(uri);
+                i =0;
+                break;
+            default:
+                throw new UnsupportedOperationException("This delete not yet implemented");
+        }
+        return i;
     }
 }

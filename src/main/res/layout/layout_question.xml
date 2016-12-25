@@ -1,45 +1,60 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:id="@+id/fragmentQuestion"
+
+
+    >
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
 
-    <ImageView
-        android:id="@+id/image"
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:gravity="center" />
+        android:id="@+id/progressBar" />
 
     <TextView
-        android:id="@+id/question"
+        android:id="@+id/deckAndCarTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-
         android:layout_alignParentTop="true"
         android:gravity="center"
-        android:text="QUESTION"
-        android:textSize="50sp"
+        android:text="NAME CARD"
+        android:textSize="24sp"
 
         />
-
-    <TextView
-        android:id="@+id/THEquestion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:gravity="center"
-        android:text="LA QUESTION"
-        android:textSize="30sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
         android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/laQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="LA QUESTION"
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="votre reponse"
+        android:id="@+id/txtreponse"
+        android:textAlignment="viewStart" />
 
     <Button
         android:gravity="center"
@@ -52,3 +67,5 @@
         />
 
 </LinearLayout>
+
+</ScrollView>

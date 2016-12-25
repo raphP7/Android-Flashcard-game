@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 
 public class DeckDB extends SQLiteOpenHelper {
-    private static int VERSION = 6;
+    private static int VERSION = 9;
 
 
     private static String DECK ="deck_table";
@@ -16,21 +16,23 @@ public class DeckDB extends SQLiteOpenHelper {
     private static String TITLE="title";
     private static String QUESTION="question";
     private static String REPONSE="reponse";
+    private static String NIVEAU="niveau";
     private static String ID="_id";
-    private static String GAMEID=" game_id";
+    private static String DECKID="deck_id";
 
     private static String GAMESBD = "GamesBD.db";
     private static DeckDB instance;
 
     private String game_table = "create table "+DECK+" ( " +
-            NOM+" varchar(30) not null, " +
+            NOM+" varchar(30) not null unique, " +
             ID + " integer primary key " + ");";
 
     private String card_table = "create table "+CARD +" (" +
             TITLE + " varchar(50) not null, " +
             QUESTION + " varchar(50) not null ," +
             REPONSE + " varchar(50) not null ,"+
-            GAMEID + " int references game_table , " +
+            NIVEAU + " int not null ,"+
+            DECKID + " int references deck_table , " +
             ID + " integer primary key " + ");";
 
 

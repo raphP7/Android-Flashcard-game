@@ -1,6 +1,7 @@
 package com.auvert.raphaela.myproject;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,20 +18,25 @@ import android.widget.TextView;
 
 public class Reponse extends Fragment {
 
-    boolean reponse;
-    String theReponse;
-    RadioGroup radioButtonGroup;
-    TextView goodORfalse;
-    Button autreQuestion;
+    private boolean reponse;
+    private String theReponse;
+    private RadioGroup radioButtonGroup;
+    private TextView goodORfalse;
+    private Button autreQuestion;
+    private long idCard;
 
     public Reponse() {
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.layout_reponse, container, false);
+
+        idCard = getArguments().getLong("idCard");
         reponse = getArguments().getBoolean("reponse");
         theReponse = getArguments().getString("theReponse");
 
@@ -48,6 +54,8 @@ public class Reponse extends Fragment {
         }
 
 
+        TextView TxtViewreponse= (TextView) rootView.findViewById(R.id.reponse);
+        TxtViewreponse.setText(theReponse);
         radioButtonGroup = (RadioGroup) rootView.findViewById(R.id.Radiogroup);
 
 
@@ -69,10 +77,17 @@ public class Reponse extends Fragment {
         int radioButtonID = radioButtonGroup.getCheckedRadioButtonId();
         RadioButton radioButton =(RadioButton) radioButtonGroup.findViewById(radioButtonID);
 
+
+
         if(radioButton!=null){
             int idx = radioButtonGroup.indexOfChild(radioButton);
             System.out.println("Radio select : "+radioButton.getText());
         }
+
+        Fragment fragment = new Question();
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
     }
 
 

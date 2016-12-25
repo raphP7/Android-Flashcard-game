@@ -3,32 +3,72 @@ package com.auvert.raphaela.myproject;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    private String authority;
     private CharSequence mTitle;
     private CharSequence mDrawerTitle;
     private String[] fragmentNames;
+
+
+    private long idDeckInUse=-1;
+    private String idDeckName;
+
+    public void setIdDeckInUse(long id){
+        this.idDeckInUse=id;
+    }
+    public long getIdDeckInUse(){
+        return this.idDeckInUse;
+    }
+    public void setidDeckName(String idDeckName){
+        this.idDeckName=idDeckName;
+    }
+    public String getidDeckName(){
+        return this.idDeckName;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("id", idDeckInUse);
+    }
+
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if(savedInstanceState!=null){
+            idDeckInUse=savedInstanceState.getLong("id");
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        authority = getResources().getString(R.string.authority);
+
 
         mTitle = mDrawerTitle = getTitle();
         fragmentNames = getResources().getStringArray(R.array.menu_array);
@@ -61,6 +101,9 @@ public class MainActivity extends Activity {
             }
 
             public void onDrawerOpened(View drawerView) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(drawerView.getWindowToken(),0);
+
                 getActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
@@ -95,23 +138,7 @@ public class MainActivity extends Activity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        // Handle action buttons
-        /*
-        switch (item.getItemId()) {
-            case R.id.action_websearch:
-                // create intent to perform web search for this planet
-                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-                intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
-                // catch event that there's no activity to handle intent
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }*/
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -119,42 +146,93 @@ public class MainActivity extends Activity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+
             selectItem(position);
         }
     }
 
-    private void selectItem(int position) {
+
+
+    public void selectItem(int position) {
         // update the main content by replacing fragments
         Fragment fragment = new Question();
+        String tag="question";
 
         switch (position) {
             case 0:
                 fragment= new SelectDeck();
+                tag="selectDeck";
                 break;
             case 1:
-                fragment = new Editer();
+                if(idDeckInUse==-1){
+                    Toast toast = Toast.makeText(this,"SELECT A DECK FIRST", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    fragment=new SelectDeck();
+                    tag="selectDeck";
+                    position=0;
+                    break;
+                }else{
+                    fragment = new ListCards();
+                    tag="listCards";
+                }
+
                 break;
             case 2:
-                fragment= new Question();
+                if(idDeckInUse==-1){
+                    Toast toast = Toast.makeText(this,"SELECT A DECK FIRST", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    fragment=new SelectDeck();
+                    tag="selectDeck";
+                    position=0;
+                    break;
+                }else{
+                    fragment= new Question();
+                    tag="question";
+                }
+
                 break;
             case 3:
                 fragment= new Telecharger();
+                tag="download";
                 break;
             case 4:
-                fragment= new AjouterCarte();
+                fragment= new Reglages();
+                tag="reglages";
                 break;
+        }
+
+        if(fragment==null){
+            fragment=new Question();
+            tag="question";
         }
 
         Bundle args = new Bundle();
         args.putInt("argQuestion", position);
         fragment.setArguments(args);
 
+
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+        if(tag=="reglages" || tag=="download"){
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(tag).commit();
+        }else{
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        }
+
+        //fragmentManager.beginTransaction().add(fragment,tag).commit();
 
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
-        setTitle(fragmentNames[position]);
+
+        if(position<fragmentNames.length){
+            setTitle(fragmentNames[position]);
+        }
+
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -183,8 +261,34 @@ public class MainActivity extends Activity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    public void callReponse(){
 
+    public boolean supprimerFromList(ListView list, String tab , String type) {
 
+        long[] ids = list.getCheckedItemIds();
+        if (ids.length == 0){
+            Toast toast = Toast.makeText(this,"SELECT AT LEAST ONE "+type, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            return false ;
+        }
+
+        for (long id : ids) {
+            Log.d("supprimer id =", id + "");
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("content")
+                    .authority(authority)
+                    .appendPath(tab);
+
+            /* id du livre a supprimer a la fin de uri */
+
+            ContentUris.appendId(builder, id);
+            Uri uri = builder.build();
+
+            int res = getContentResolver().delete(uri, null, null);
+            Log.d("result of delete=", res + "");
+        }
+        return true;
     }
+
 }
+
