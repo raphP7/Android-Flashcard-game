@@ -11,25 +11,26 @@
         android:orientation="vertical">
 
         <RadioButton
-            android:id="@+id/Radiobutton0"
+            android:id="@+id/Radiobutton1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="DIFICILLE" />
 
         <RadioButton
-            android:id="@+id/Radiobutton1"
+            android:id="@+id/Radiobutton2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="MOYEN" />
+            android:text="MOYEN"
+            android:contentDescription="1" />
 
         <RadioButton
-            android:id="@+id/Radiobutton2"
+            android:id="@+id/Radiobutton3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="FACILE" />
 
         <RadioButton
-            android:id="@+id/Radiobutton3"
+            android:id="@+id/Radiobutton4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TRES FACILE" />
@@ -40,7 +41,7 @@
             android:background="@android:color/darker_gray" />
 
         <RadioButton
-            android:id="@+id/Radiobutton4"
+            android:id="@+id/Radiobutton0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -48,6 +49,7 @@
 
 
     </RadioGroup>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"

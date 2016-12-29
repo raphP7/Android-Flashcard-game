@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -33,6 +35,8 @@ public class MainActivity extends Activity {
     private CharSequence mDrawerTitle;
     private String[] fragmentNames;
 
+    public boolean downloadInProgress;
+    public int timeForQuestion;
 
     private long idDeckInUse=-1;
     private String idDeckName;
@@ -54,12 +58,18 @@ public class MainActivity extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong("id", idDeckInUse);
+        outState.putString("idDeckName",idDeckName);
+        outState.putBoolean("downloadInProgress",downloadInProgress);
+        outState.putInt("timeForQuestion",timeForQuestion);
     }
 
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if(savedInstanceState!=null){
             idDeckInUse=savedInstanceState.getLong("id");
+            idDeckName=savedInstanceState.getString("idDeckName");
+            downloadInProgress=savedInstanceState.getBoolean("downloadInProgress");
+            timeForQuestion=savedInstanceState.getInt("timeForQuestion");
         }
     }
 
@@ -69,6 +79,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         authority = getResources().getString(R.string.authority);
 
+        Intent tmp = new Intent(this, BackgroundService.class);
+        tmp.putExtra("counter",5);
+        startService(tmp);
 
         mTitle = mDrawerTitle = getTitle();
         fragmentNames = getResources().getStringArray(R.array.menu_array);
@@ -168,7 +181,7 @@ public class MainActivity extends Activity {
                 break;
             case 1:
                 if(idDeckInUse==-1){
-                    Toast toast = Toast.makeText(this,"SELECT A DECK FIRST", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(this, getString(R.string.SelectFirstDeck), Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                     fragment=new SelectDeck();
@@ -183,7 +196,7 @@ public class MainActivity extends Activity {
                 break;
             case 2:
                 if(idDeckInUse==-1){
-                    Toast toast = Toast.makeText(this,"SELECT A DECK FIRST", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(this, getString(R.string.SelectFirstDeck), Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                     fragment=new SelectDeck();
@@ -236,6 +249,11 @@ public class MainActivity extends Activity {
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
+
+    public void setDrawerItemCheck(int position){
+        mDrawerList.setItemChecked(position, true);
+    }
+
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
@@ -266,7 +284,7 @@ public class MainActivity extends Activity {
 
         long[] ids = list.getCheckedItemIds();
         if (ids.length == 0){
-            Toast toast = Toast.makeText(this,"SELECT AT LEAST ONE "+type, Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(this,getString(R.string.SelectAtLeast1)+" "+type, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             return false ;
@@ -288,6 +306,52 @@ public class MainActivity extends Activity {
             Log.d("result of delete=", res + "");
         }
         return true;
+    }
+
+
+    public int getDificultyValue(int radioGroupChecked){
+
+        int dificultySelect=-1;
+
+        switch (radioGroupChecked){
+            case R.id.Radiobutton0 :
+                dificultySelect=0;
+                break;
+            case R.id.Radiobutton1 :
+                dificultySelect=1;
+                break;
+            case R.id.Radiobutton2 :
+                dificultySelect=2;
+                break;
+            case R.id.Radiobutton3 :
+                dificultySelect=3;
+                break;
+            case R.id.Radiobutton4 :
+                dificultySelect=4;
+                break;
+        }
+        return  dificultySelect;
+    }
+
+    public void setCheckRadioGroup(RadioGroup radioGroup , int dificulty){
+
+        switch (dificulty){
+            case 0 :
+                radioGroup.check(R.id.Radiobutton0);
+                break;
+            case 1 :
+                radioGroup.check(R.id.Radiobutton1);
+                break;
+            case 2 :
+                radioGroup.check(R.id.Radiobutton2);
+                break;
+            case 3 :
+                radioGroup.check(R.id.Radiobutton3);
+                break;
+            case 4 :
+                radioGroup.check(R.id.Radiobutton4);
+                break;
+        }
     }
 
 }

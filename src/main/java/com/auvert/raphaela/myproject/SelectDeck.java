@@ -9,8 +9,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +18,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.HashSet;
 
 /**
  * Created by Raph on 23/12/2016.
@@ -31,6 +32,7 @@ public class SelectDeck extends Fragment implements LoaderManager.LoaderCallback
     private String authority ;
     private SimpleCursorAdapter listAdapter;
     private ListView listView;
+    private HashSet<String> listeNameDeck;
 
     public SelectDeck() {
         // Empty constructor required for fragment subclasses
@@ -39,6 +41,8 @@ public class SelectDeck extends Fragment implements LoaderManager.LoaderCallback
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        listeNameDeck=new HashSet<>();
         authority = getResources().getString(R.string.authority);
 
         listAdapter = new SimpleCursorAdapter(getActivity(),
@@ -56,6 +60,7 @@ public class SelectDeck extends Fragment implements LoaderManager.LoaderCallback
                              Bundle savedInstanceState) {
 
 
+
         View rootView = inflater.inflate(R.layout.layout_listage, container, false);
 
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -66,27 +71,30 @@ public class SelectDeck extends Fragment implements LoaderManager.LoaderCallback
         Button DELETE = (Button) rootView.findViewById(R.id.buttonDELETE);
         Button DEFINE = (Button) rootView.findViewById(R.id.buttonDEFINE);
         DEFINE.setVisibility(View.VISIBLE);
+        CREATE.setText(R.string.CreateNewDeck);
+        EDIT.setText(R.string.EditSelectDeck);
+        EDIT.setVisibility(View.GONE);
 
-        CREATE.setText("CREATE new DECK");
-        EDIT.setText("EDIT selected DECK");
-        DELETE.setText("DELETE selected DECK");
 
+        if(((MainActivity) getActivity()).downloadInProgress){
+            DELETE.setText("DONWLOAD IN PROGRESS , DELETE DISABLE");
+        }else{
+            DELETE.setText(R.string.DeleteSelectDeck);
+            DELETE.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    supprimerDeck(v);
+                }
+            });
+        }
 
         listView = (ListView) rootView.findViewById(R.id.listageList);
-
         listView.setAdapter(listAdapter);
 
         DEFINE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectDeck(v);
-            }
-        });
-
-        DELETE.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                supprimerDeck(v);
             }
         });
 
@@ -103,6 +111,17 @@ public class SelectDeck extends Fragment implements LoaderManager.LoaderCallback
               public void onItemClick(AdapterView<?> parent,
                                       View view,
                                       int position, long id) {
+
+
+                  TextView c =(TextView) view;
+                  String se=c.getText().toString();
+
+
+                  if(listeNameDeck.contains(se)){
+                      listeNameDeck.remove(se);
+                  }else{
+                      listeNameDeck.add(se);
+                  }
                   listAdapter.notifyDataSetChanged();
               }
           });
@@ -119,43 +138,37 @@ public class SelectDeck extends Fragment implements LoaderManager.LoaderCallback
 
     public void selectDeck(View view){
         long[] ids = listView.getCheckedItemIds();
-        if (ids.length!=1){
-            Toast toast = Toast.makeText(getActivity(),"SELECT ONE and ONLY ONE DECK ", Toast.LENGTH_SHORT);
+
+        if(listeNameDeck==null){
+            return;
+        }
+
+        String[] arr = listeNameDeck.toArray(new String[listeNameDeck.size()]);
+
+        if (ids.length!=1 || arr.length!=1){
+            Toast toast = Toast.makeText(getActivity(),getString(R.string.Select1AndOnly1)+" "+getString(R.string.Deck), Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             return;
         }
 
-        String nameDeck="";
-        int position=-1;
-
-
-        SparseBooleanArray checked = listView.getCheckedItemPositions();
-
-        for (int i = 0; i < checked.size(); i++) {
-            if(checked.valueAt(i) == true) {
-                Log.d("POSITION SELECT ",""+i);
-                position=i;
-            }
-        }
-
-        Cursor cursor=(Cursor) listView.getItemAtPosition(position);
-        cursor.moveToPosition(position);
-        nameDeck = cursor.getString(cursor.getColumnIndex("nom"));
+        String  itemValue = arr[0];
 
         long idSelected = ids[0];
 
-        ((MainActivity)getActivity()).setidDeckName(nameDeck);
+        ((MainActivity)getActivity()).setidDeckName(itemValue);
         ((MainActivity)getActivity()).setIdDeckInUse(idSelected);
 
 
-        Toast toast = Toast.makeText(getActivity(),"DECK <"+nameDeck+"> SELECT", Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getActivity(),getString(R.string.Deck)+" "+itemValue+" "+getString(R.string.Select), Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
         Fragment fragment = new Question();
         FragmentManager fragmentManager = getActivity().getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+        ((MainActivity)getActivity()).setDrawerItemCheck(2);
 
     }
 
@@ -169,7 +182,7 @@ public class SelectDeck extends Fragment implements LoaderManager.LoaderCallback
 
     public void supprimerDeck(View view) {
 
-        ((MainActivity)getActivity()).supprimerFromList(listView,"deck_table","DECK");
+        ((MainActivity)getActivity()).supprimerFromList(listView,"deck_table",getString(R.string.Deck)+"");
         getLoaderManager().restartLoader(1, null, this);
 
     }

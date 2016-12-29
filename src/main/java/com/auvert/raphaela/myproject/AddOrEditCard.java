@@ -19,8 +19,13 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.util.Date;
 
 /**
  * Created by Raph on 23/12/2016.
@@ -29,21 +34,20 @@ import android.widget.Toast;
 public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private String authority ;
-
-    private String stringValueTxt="CREATE NEW CARD";
-
-    private String stringValueButtonCREATE ="CREATE THE CARD";
-
-    private String stringValueButtonEDIT ="EDIT THE CARD";
-
     private long idEditCard=-1;
     private boolean modeEdit;
 
     private EditText titre;
-
     private EditText question;
-
     private EditText reponse;
+    private TextView txtDate;
+    private RadioGroup radioGroup;
+
+    private RadioButton desactiver;
+    private RadioButton tresfacile;
+    private RadioButton facile;
+    private RadioButton moyen;
+    private RadioButton difficile;
 
 
     public AddOrEditCard() {
@@ -80,22 +84,30 @@ public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallb
         }
 
 
-        Button newValueButton= (Button) rootView.findViewById(R.id.newValueButton);
-        TextView newValueTxt= (TextView) rootView.findViewById(R.id.newValueTxt);
+        Button newValueButton = (Button) rootView.findViewById(R.id.newValueButton);
+        TextView newValueTxt = (TextView) rootView.findViewById(R.id.newValueTxt);
 
-        ;
+        radioGroup = (RadioGroup) rootView.findViewById(R.id.Radiogroup);
 
+
+        desactiver = (RadioButton) rootView.findViewById(R.id.Radiobutton0);
+        tresfacile = (RadioButton) rootView.findViewById(R.id.Radiobutton1);
+        facile = (RadioButton) rootView.findViewById(R.id.Radiobutton2);
+        moyen = (RadioButton) rootView.findViewById(R.id.Radiobutton3);
+        difficile = (RadioButton) rootView.findViewById(R.id.Radiobutton4);
+
+        txtDate= (TextView) rootView.findViewById(R.id.textViewDate);
 
         TextView txtTitre= (TextView) rootView.findViewById(R.id.textView1);
-        txtTitre.setText("LE TITRE :");
+        txtTitre.setText(R.string.theTitle);
         txtTitre.setVisibility(View.VISIBLE);
 
         TextView txtQuestion= (TextView) rootView.findViewById(R.id.textView2);
-        txtQuestion.setText("LA QUESTION :");
+        txtQuestion.setText(R.string.theQuestion);
         txtQuestion.setVisibility(View.VISIBLE);
 
         TextView txtReponse= (TextView) rootView.findViewById(R.id.textView3);
-        txtReponse.setText("LA REPONSE");
+        txtReponse.setText(R.string.theAnswer);
         txtReponse.setVisibility(View.VISIBLE);
 
         View separator =(View) rootView.findViewById(R.id.separator);
@@ -113,12 +125,12 @@ public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallb
 
 
         if(modeEdit){
-            newValueTxt.setText("EDIT CARD in "+((MainActivity)getActivity()).getidDeckName());
-            newValueButton.setText(stringValueButtonEDIT);
+            newValueTxt.setText(getString(R.string.editCardIn)+((MainActivity)getActivity()).getidDeckName());
+            newValueButton.setText(getString(R.string.EditTheCard));
         }else {
-            newValueTxt.setText("NEW CARD in "+((MainActivity)getActivity()).getidDeckName());
+            newValueTxt.setText(getString(R.string.newCardIn)+((MainActivity)getActivity()).getidDeckName());
             doHint();
-            newValueButton.setText(stringValueButtonCREATE);
+            newValueButton.setText(getString(R.string.CreateTheCard));
 
         }
         newValueButton.setOnClickListener(new View.OnClickListener() {
@@ -127,9 +139,6 @@ public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallb
                 ajouterOrEditer(v);
             }
         });
-
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 
         return rootView;
     }
@@ -145,7 +154,7 @@ public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallb
         Log.d("dans EDITER avec id =", idEditCard + "");
 
         if(((MainActivity)getActivity()).getIdDeckInUse()<0){
-            Toast toast = Toast.makeText(getActivity(),"SELECT A DECK FIRST", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getActivity(), getString(R.string.SelectDiskFirst), Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
 
@@ -159,16 +168,31 @@ public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallb
         String strReponse = reponse.getText().toString();
 
         if(strTitle.length()<1 || strQuestion.length()<1 || strReponse.length()<1){
-            Toast toast = Toast.makeText(getActivity(),"FILL ALL THE FIELD", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getActivity(), getString(R.string.FillAllField), Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             return;
         }
 
+        int dificulty=((MainActivity)getActivity()).getDificultyValue(radioGroup.getCheckedRadioButtonId());
+
+        if(dificulty==-1){
+            dificulty=0;
+        }
+
+
+        long valueDate= System.currentTimeMillis()-86400000;
+
+        setTxtDate(valueDate);
+        setDificulty(dificulty);
+
         ContentValues values = new ContentValues();
         values.put("title",strTitle);
         values.put("question",strQuestion);
         values.put("reponse",strReponse);
+        values.put("niveau",dificulty);
+        values.put("date",valueDate);
+
         values.put("deck_id",((MainActivity)getActivity()).getIdDeckInUse());
         ContentResolver resolver = getActivity().getContentResolver();
 
@@ -204,6 +228,13 @@ public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallb
         doHint();
     }
 
+    public void setTxtDate(long date){
+        if(date==0){
+            txtDate.setText("NEVER");
+        }else{
+            txtDate.setText(DateFormat.getDateTimeInstance().format(new Date(date)).toString());
+        }
+    }
     public  void setCardTxt(String strCard){
         titre.setText(strCard);
     }
@@ -216,6 +247,11 @@ public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallb
         reponse.setText(strReponse);
     }
 
+    public void setDificulty(int dificulty){
+
+        ((MainActivity)getActivity()).setCheckRadioGroup(radioGroup,dificulty);
+    }
+
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 
         Uri.Builder builder = (new Uri.Builder()).scheme("content")
@@ -224,12 +260,12 @@ public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallb
                 .appendPath("deck");
         ContentUris.appendId(builder,((MainActivity)getActivity()).getIdDeckInUse());
         return new CursorLoader(getActivity(), builder.build(),
-                new String[]{"_id", "title", "question", "reponse"},
+                new String[]{"_id", "title", "question", "reponse","niveau"},
                 "deck_id=" + ((MainActivity)getActivity()).getIdDeckInUse()+" AND _id="+idEditCard, null, null);
     }
 
     public  void showNoEditQuestion(){
-        Toast toast = Toast.makeText(getActivity(),"NO EDITABLE QUESTION", Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getActivity(), getString(R.string.NoEditableQuestion), Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
@@ -253,18 +289,23 @@ public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallb
         String textQuestion="";
         String textCard="";
         String textReponse="";
+        int intDificulty;
+        long date;
 
-        Log.d("DANS QUESTION "," ALEATOIR TROUVER");
         textCard=cursor.getString(cursor.getColumnIndex("title"));
         textQuestion=cursor.getString(cursor.getColumnIndex("question"));
         textReponse=cursor.getString(cursor.getColumnIndex("reponse"));
+        intDificulty=cursor.getInt(cursor.getColumnIndex("niveau"));
+        date=cursor.getLong(cursor.getColumnIndex("date"));
         //idCARD=cursor.getInt(cursor.getColumnIndex("_id"));
         cursor.moveToNext();
 
-        Log.d("DANS EDIT -> VAL",""+textCard+" "+textQuestion+" "+textReponse);
+        Log.d("IN EDIT CARD ->"," N:"+textCard+"| Q:"+textQuestion+"| A:"+textReponse+"| LVL:"+intDificulty);
         setQuestionTxt(textQuestion);
         setCardTxt(textCard);
         setReponse(textReponse);
+        setDificulty(intDificulty);
+        setTxtDate(date);
     }
 
     public void onLoaderReset(Loader<Cursor> cursorLoader) {

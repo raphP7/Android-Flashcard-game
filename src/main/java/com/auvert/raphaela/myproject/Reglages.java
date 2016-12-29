@@ -18,4 +18,5 @@ public class Reglages extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferencescreen);
     }
 
+
 }

@@ -76,11 +76,11 @@ public class DeckContentProvider extends ContentProvider {
 
         SQLiteDatabase db = helper.getWritableDatabase();
         int code = matcher.match(uri);
-        Log.d(LOG, "Uri=" + uri.toString());
+        //Log.d(LOG, "Uri=" + uri.toString());
         long id = 0;
         Uri.Builder builder = new Uri.Builder();
 
-        Log.d(LOG, "val code=" + code);
+        //Log.d(LOG, "val code=" + code);
 
         switch (code) {
             case DECK:
@@ -133,7 +133,7 @@ public class DeckContentProvider extends ContentProvider {
                 long id = ContentUris.parseId(uri);
                 Log.d(" DANS DB ->  ",""+id);
 
-                cursor = db.query("card_table", new String[]{"_id", "title","question","reponse"},
+                cursor = db.query("card_table", new String[]{"_id", "title","question","reponse","niveau","date"},
                         selection, selectionArgs, null, null, null);
 
 
@@ -164,7 +164,7 @@ public class DeckContentProvider extends ContentProvider {
                 break;
             case ONE_DECK:
                 id = ContentUris.parseId(uri);
-                i =0;
+                i=db.update("deck_table",values," _id ="+id ,null);
                 break;
             default:
                 throw new UnsupportedOperationException("This delete not yet implemented");

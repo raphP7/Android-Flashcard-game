@@ -40,8 +40,8 @@ public class ListCards extends Fragment implements LoaderManager.LoaderCallbacks
 
         listAdapter = new SimpleCursorAdapter(getActivity(),
                 android.R.layout.simple_list_item_checked, null,
-                new String[]{"title"},
-                new int[]{android.R.id.text1}, 0);
+                new String[]{"title","date"},
+                new int[]{android.R.id.text1,}, 0);
 
         LoaderManager manager = getLoaderManager();
         manager.initLoader(0, null, this);
@@ -62,9 +62,10 @@ public class ListCards extends Fragment implements LoaderManager.LoaderCallbacks
         Button EDIT= (Button) rootView.findViewById(R.id.buttonEDIT);
         Button DELETE = (Button) rootView.findViewById(R.id.buttonDELETE);
 
-        CREATE.setText("CREATE new CARD");
-        EDIT.setText("EDIT selected CARD");
-        DELETE.setText("DELETE selected CARD");
+        String createStr=getString(R.string.CreateNewCard)+" "+" IN "+((MainActivity) getActivity()).getidDeckName();
+        CREATE.setText(createStr);
+        EDIT.setText(R.string.EditSelectCard);
+        DELETE.setText(R.string.DeleteSelectCard);
 
         CREATE.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +120,7 @@ public class ListCards extends Fragment implements LoaderManager.LoaderCallbacks
 
         long[] ids = listView.getCheckedItemIds();
         if (ids.length!=1){
-            Toast toast = Toast.makeText(getActivity(),"SELECT ONE and ONLY ONE CARD ", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getActivity(), getString(R.string.Select1AndOnly1), Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             return;
@@ -159,7 +160,7 @@ public class ListCards extends Fragment implements LoaderManager.LoaderCallbacks
         ContentUris.appendId(builder,((MainActivity)getActivity()).getIdDeckInUse());
 
         return new CursorLoader(getActivity(), builder.build(),
-                new String[]{"_id", "title"},
+                new String[]{"_id", "title","date"},
                 "deck_id=" + ((MainActivity)getActivity()).getIdDeckInUse(), null, null);
     }
 

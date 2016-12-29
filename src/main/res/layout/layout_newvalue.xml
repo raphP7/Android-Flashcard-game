@@ -87,7 +87,6 @@
             android:gravity="center"
             android:textAlignment="center"
             android:textSize="20sp"
-
              />
 
 
@@ -95,14 +94,31 @@
             android:id="@+id/newValueEnter3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:ems="10"
             android:inputType="textPersonName"
             android:nextFocusDown="@+id/newValueButton"
-
              />
 
         <include layout="@layout/drawer_radiobutton"/>
+
+        <TextView
+            android:id="@+id/textDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="DATE :"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:id="@+id/textViewDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            />
 
         <Button
             android:id="@+id/newValueButton"

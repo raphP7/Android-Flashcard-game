@@ -17,9 +17,24 @@
         android:positiveButtonText="Valider"
         android:negativeButtonText="Annuler"
         android:title="Choisir limite de temps"
+        android:defaultValue="10"
         android:summary="secondes"
         android:inputType="number"
         android:singleLine="true"
         android:dependency="checkBoxTime" />
+
+    <EditTextPreference
+        android:key="timeDeckNotif"
+        android:id="@+id/timeDeckNotif"
+        android:dialogTitle="Pour un deck non jour \nDefinir Interval de Temps avant Noficiation"
+        android:positiveButtonText="Valider"
+        android:negativeButtonText="Annuler"
+        android:title="Choisir interval notification"
+        android:defaultValue="5"
+        android:summary="en minutes"
+        android:inputType="number"
+        android:singleLine="true"
+         />
+
 
 </PreferenceScreen>

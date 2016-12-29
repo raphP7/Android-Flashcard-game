@@ -24,12 +24,6 @@ public class AjouterDeck extends Fragment {
 
     private String authority ;
 
-    private String stringValueButton="NEW DECK";
-
-    private String stringValueEnter="name";
-
-    private String stringValueTxt="CREATE NEW DECK";
-
     private EditText newValueEnter;
 
     public AjouterDeck() {
@@ -56,9 +50,9 @@ public class AjouterDeck extends Fragment {
         newValueEnter.requestFocus();
         Button newValueButton= (Button) rootView.findViewById(R.id.newDeckValueButton);
 
-        newValueButton.setText(stringValueButton);
-        newValueTxt.setText(stringValueTxt);
-        newValueEnter.setHint(stringValueEnter);
+        newValueButton.setText(getString(R.string.NewDeck));
+        newValueTxt.setText(getString(R.string.CreateNewDeck));
+        newValueEnter.setHint(getString(R.string.name));
 
         newValueButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,14 +71,16 @@ public class AjouterDeck extends Fragment {
 
         String n = newValueEnter.getText().toString();
         if(n.length()<1){
-            Toast toast = Toast.makeText(getActivity(),"ENTER A DECK NAME", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getActivity(), getString(R.string.EnterDeckName), Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             return;
         }
         newValueEnter.getText().clear();
+        long date= System.currentTimeMillis();
         ContentValues values = new ContentValues();
         values.put("nom",n);
+        values.put("time",date);
         ContentResolver resolver = getActivity().getContentResolver();
 
         Uri.Builder builder = new Uri.Builder();
@@ -95,7 +91,7 @@ public class AjouterDeck extends Fragment {
         try{
             uri = resolver.insert(uri,values);
         }catch (android.database.sqlite.SQLiteConstraintException e){
-            Toast toast = Toast.makeText(getActivity(),"THIS DECK NAME ALREADY EXIST", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getActivity(), getString(R.string.DeckNameAlExist), Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             return;
@@ -104,8 +100,7 @@ public class AjouterDeck extends Fragment {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(),0);
 
-
-            Toast toast = Toast.makeText(getActivity(),"NEW DECK "+n+" CREATE !", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getActivity(),getString(R.string.NewDeck)+" "+n+" "+getString(R.string.Create), Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
 

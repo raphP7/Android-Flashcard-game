@@ -29,24 +29,7 @@
                 android:id="@+id/buttonCREATE"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CREATE NEW" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:background="@android:color/darker_gray" />
-
-            <Button
-                android:id="@+id/buttonEDIT"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="EDIT SELECTED" />
-
-            <Button
-                android:id="@+id/buttonDELETE"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="DELETE" />
+                android:text="@string/CreateNew" />
 
             <View
                 android:layout_width="match_parent"
@@ -58,7 +41,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                android:text="JOUER AVEC CE DECK" />
+                android:text="@string/PlayWIthDeck" />
+
+            <Button
+                android:id="@+id/buttonEDIT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/EditSelected" />
+
+            <Button
+                android:id="@+id/buttonDELETE"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Delete" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@android:color/darker_gray" />
 
 
         </LinearLayout>
