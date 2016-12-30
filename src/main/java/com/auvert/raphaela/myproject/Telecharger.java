@@ -399,6 +399,10 @@ public class Telecharger extends Fragment {
                 String reponse=null;
                 String niveau=null;
 
+                int limit=1000;
+                ContentValues[] valuesArray=new ContentValues[limit];
+
+                int valuesArrayCmp=0;
                 long idDeck=-1;
                 try {
 
@@ -418,6 +422,7 @@ public class Telecharger extends Fragment {
                         dbName=tab[1];
                         ContentValues values = new ContentValues();
                         values.put("nom",dbName);
+                        values.put("time",0);
 
                         Uri.Builder builder = new Uri.Builder();
                         builder.scheme("content").authority(authority).appendPath("deck_table");
@@ -443,6 +448,14 @@ public class Telecharger extends Fragment {
                     int result;
                     int lasvalue=0;
                     long valueDate= System.currentTimeMillis()-86400000;
+
+
+                    Uri.Builder builder = new Uri.Builder();
+                    builder.scheme("content").
+                            authority(authority)
+                            .appendPath("card_table");
+                    Uri uri = builder.build();
+
                     while((line=br.readLine())!=null){
                         total++;
                         result=((int) ((total * 100) / nbLines));
@@ -477,6 +490,14 @@ public class Telecharger extends Fragment {
 
                         if(title!=null && question!=null && reponse!=null && niveau!=null){
 
+                            if(valuesArrayCmp>limit-1){
+                                int tmpResult= resolver.bulkInsert(uri,valuesArray);
+                                cmpGoodEntry+=tmpResult;
+                                cmpFalseEntry=(limit-1)-tmpResult;
+                                valuesArray= new ContentValues[1000];
+                                valuesArrayCmp=0;
+                            }
+
                             ContentValues values = new ContentValues();
                             values.put("title",title);
                             values.put("question",question);
@@ -485,25 +506,19 @@ public class Telecharger extends Fragment {
                             values.put("deck_id",idDeck);
                             values.put("date",valueDate);
 
-                            if(resolver!=null){
-                                Uri.Builder builder = new Uri.Builder();
-                                builder.scheme("content").
-                                        authority(authority)
-                                        .appendPath("card_table");
-                                Uri uri = builder.build();
-                                uri = resolver.insert(uri,values);
-
-                                if(ContentUris.parseId(uri)!=-1){
-                                    cmpGoodEntry++;
-                                }else{
-                                    cmpFalseEntry++;
-                                }
-                            }
+                            valuesArray[valuesArrayCmp]=values;
+                            valuesArrayCmp++;
                         }else{
                             cmpFalseEntry++;
                         }
 
                     }
+                    if(valuesArrayCmp>0){
+                        int tmpResult= resolver.bulkInsert(uri,valuesArray);
+                        cmpGoodEntry+=tmpResult;
+                        cmpFalseEntry=valuesArrayCmp-tmpResult;
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -550,17 +565,7 @@ public class Telecharger extends Fragment {
                         }
                     });
                 }
-
             }
-
-
         }
-
-
-
     }
-
-
-
-
 }

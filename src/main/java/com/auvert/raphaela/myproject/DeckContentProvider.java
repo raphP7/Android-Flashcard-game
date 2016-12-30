@@ -70,6 +70,39 @@ public class DeckContentProvider extends ContentProvider {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+
+        int insertCount = 0;
+        SQLiteDatabase db = helper.getWritableDatabase();
+        int code = matcher.match(uri);
+        //Log.d(LOG, "Uri=" + uri.toString());
+        long id = 0;
+
+        //Log.d(LOG, "val code=" + code);
+
+        switch (code) {
+            case CARD:
+                db.beginTransaction();
+                for(int i=0; i<values.length;i++){
+                    if(values[i]!=null){
+                        id = db.insert("card_table", null, values[i]);
+                        if(id>0){
+                            insertCount++;
+                        }
+                    }
+
+                }
+                db.setTransactionSuccessful();
+                break;
+            default:
+                throw new UnsupportedOperationException("this insert not yet implemented");
+        }
+        db.endTransaction();
+        return insertCount;
+    }
+
     @Override
     public Uri insert(Uri uri, ContentValues values) {
 
@@ -115,7 +148,6 @@ public class DeckContentProvider extends ContentProvider {
         Cursor cursor;
         switch (code) {
             case DECK:
-
                 cursor = db.query("deck_table", projection, selection,
                         selectionArgs, null, null, sortOrder);
                 break;

@@ -8,7 +8,7 @@
         android:title="LIMITE DE TEMPS"
         android:summaryOn="time limit activate"
         android:summaryOff="time limit disable"
-        android:defaultValue="false"/>
+        android:defaultValue="true"/>
 
     <EditTextPreference
         android:key="editTextTime"

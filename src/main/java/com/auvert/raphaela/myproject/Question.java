@@ -25,8 +25,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Random;
-
 /**
  * Created by Raph on 23/12/2016.
  */
@@ -53,13 +51,11 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
     public void onResume()
     {
         super.onResume();
-        testPreference();
         Log.d("Question","onResume");
         getLoaderManager().restartLoader(1, null, this);
     }
 
     public boolean testPreference(){
-
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         boolean activer=preferences.getBoolean("checkBoxTime",false);
@@ -76,8 +72,11 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         authority=getResources().getString(R.string.authority);
-        LoaderManager manager = getLoaderManager();
-        manager.initLoader(1, null, this);
+        if(savedInstanceState!=null){
+            testPreference();
+            LoaderManager manager = getLoaderManager();
+            manager.initLoader(1, null, this);
+        }
     }
 
     public Question() {
@@ -197,9 +196,7 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
             @Override
             public void onFinish() {
                 if(voirReponse!=null){
-                    if(testPreference()){
-                        voirReponse.performClick();
-                    }
+                    voirReponse.performClick();
                 }
             }
         };
@@ -248,18 +245,21 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 
         Log.d("DANS QUESTION ","Taille cursor : "+taille);
+
+        /*
         Random r = new Random();
         int Low = 0;
         int result = r.nextInt(taille-Low) + Low;
 
         Log.d("DANS QUESTION "," ALEATOIR CHOISIT : "+result);
+        */
         cursor.moveToFirst();
         String textQuestion="";
         String textCard="";
         int cmp=0;
         while (!cursor.isAfterLast()) {
 
-            if(result==cmp){
+            //if(result==cmp){
                 Log.d("DANS QUESTION "," ALEATOIR TROUVER");
                 textCard=cursor.getString(cursor.getColumnIndex("title"));
                 textQuestion=cursor.getString(cursor.getColumnIndex("question"));
@@ -269,9 +269,9 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
 
                 Log.d("VAL PRISE ",""+textCard+" "+textQuestion+" "+reponseOfCard+" "+idCARD);
                 break;
-            }
-            cmp++;
-            cursor.moveToNext();
+            //}
+            //cmp++;
+            //cursor.moveToNext();
         }
         setQuestionTxt(textQuestion);
         setCardTxt(textCard);

@@ -43,8 +43,10 @@ public class ListCards extends Fragment implements LoaderManager.LoaderCallbacks
                 new String[]{"title","date"},
                 new int[]{android.R.id.text1,}, 0);
 
-        LoaderManager manager = getLoaderManager();
-        manager.initLoader(0, null, this);
+        if(savedInstanceState!=null){
+            LoaderManager manager = getLoaderManager();
+            manager.initLoader(0, null, this);
+        }
     }
 
 

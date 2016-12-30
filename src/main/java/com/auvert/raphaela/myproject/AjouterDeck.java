@@ -77,7 +77,7 @@ public class AjouterDeck extends Fragment {
             return;
         }
         newValueEnter.getText().clear();
-        long date= System.currentTimeMillis();
+        long date= 0;//System.currentTimeMillis();
         ContentValues values = new ContentValues();
         values.put("nom",n);
         values.put("time",date);

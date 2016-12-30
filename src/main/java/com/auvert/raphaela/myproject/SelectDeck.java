@@ -182,6 +182,10 @@ public class SelectDeck extends Fragment implements LoaderManager.LoaderCallback
 
     public void supprimerDeck(View view) {
 
+
+        ((MainActivity)getActivity()).setidDeckName("");
+        ((MainActivity)getActivity()).setIdDeckInUse(-1);
+
         ((MainActivity)getActivity()).supprimerFromList(listView,"deck_table",getString(R.string.Deck)+"");
         getLoaderManager().restartLoader(1, null, this);
 

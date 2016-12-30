@@ -93,7 +93,6 @@ public class Reponse extends Fragment {
 
         int dificulty2=((MainActivity)getActivity()).getDificultyValue(radioGroup.getCheckedRadioButtonId());
 
-
         long valueDate = System.currentTimeMillis();
 
         ContentValues valuesDeck = new ContentValues();

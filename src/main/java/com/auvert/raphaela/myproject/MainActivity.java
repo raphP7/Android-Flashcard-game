@@ -79,9 +79,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         authority = getResources().getString(R.string.authority);
 
-        Intent tmp = new Intent(this, BackgroundService.class);
-        tmp.putExtra("counter",5);
-        startService(tmp);
+        if(savedInstanceState==null){
+            Intent tmp = new Intent(this, BackgroundService.class);
+            startService(tmp);
+        }
 
         mTitle = mDrawerTitle = getTitle();
         fragmentNames = getResources().getStringArray(R.array.menu_array);
