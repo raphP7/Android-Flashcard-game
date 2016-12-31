@@ -17,6 +17,4 @@ public class Reglages extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferencescreen);
     }
-
-
 }

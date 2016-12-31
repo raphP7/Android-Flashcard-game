@@ -255,7 +255,23 @@ public class Telecharger extends Fragment {
 
                     // this will be useful so that you can show a tipical 0-100%
                     // progress bar
-                    int lenghtOfFile = conection.getContentLength();
+                    long lenghtOfFile = conection.getContentLength();
+                    if(lenghtOfFile==-1){
+                        final URL uri=new URL(f_url[0]);
+                        URLConnection ucon;
+                        try
+                        {
+                            ucon=uri.openConnection();
+                            ucon.connect();
+                            final String contentLengthStr=ucon.getHeaderField("content-length");
+                            lenghtOfFile = Long.parseLong(contentLengthStr);
+                        }
+                        catch(final IOException e1)
+                        {
+                        }
+                    }
+
+                    Log.d("DONWLOAD","SIZE : "+lenghtOfFile);
 
                     // download the file
                     InputStream input = new BufferedInputStream(url.openStream(),
@@ -273,13 +289,17 @@ public class Telecharger extends Fragment {
 
                     long total = 0;
 
-                    int lastValue=0;
+                    long lastValue=0;
+                    long result;
                     Log.d("AsynkTask","BEFORE READ");
+                    if(lenghtOfFile==-1){
+                        newValueTxtInUI("DOWNLOAD IN PROGRESS\n "+"SIZE UNKNOW SERVER DONT COMUNICATE IT",newValueTxt);
+                    }
                     while ((count = input.read(data)) != -1) {
                         total += count;
-                        int result = (int) ((total * 100) / lenghtOfFile);
+                        result = (total * 100) / lenghtOfFile;
 
-                        if(lastValue!=result){
+                        if(lastValue!=result && lenghtOfFile!=-1){
                             publishProgress(("") +result );
                             newValueTxtInUI("DOWNLOAD IN PROGRESS "+result+"%",newValueTxt);
                         }
@@ -399,7 +419,7 @@ public class Telecharger extends Fragment {
                 String reponse=null;
                 String niveau=null;
 
-                int limit=1000;
+                int limit=5000;
                 ContentValues[] valuesArray=new ContentValues[limit];
 
                 int valuesArrayCmp=0;
@@ -442,6 +462,7 @@ public class Telecharger extends Fragment {
 
                     }else{
                         toastInUI(getString(R.string.MissingDBTitle));
+                        return;
                     }
 
                     int total=0;
@@ -494,7 +515,7 @@ public class Telecharger extends Fragment {
                                 int tmpResult= resolver.bulkInsert(uri,valuesArray);
                                 cmpGoodEntry+=tmpResult;
                                 cmpFalseEntry=(limit-1)-tmpResult;
-                                valuesArray= new ContentValues[1000];
+                                valuesArray= new ContentValues[limit];
                                 valuesArrayCmp=0;
                             }
 

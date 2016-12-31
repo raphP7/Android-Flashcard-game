@@ -25,6 +25,7 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:id="@+id/progressBar" />
 
     <TextView
@@ -33,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:gravity="center"
-        android:text="NO CARD"
+        android:text="LOADING CARD"
         android:textSize="24sp"
 
         />
@@ -41,14 +42,14 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="@android:color/darker_gray" />
+         />
 
     <TextView
         android:id="@+id/laQuestion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="AVAILABLE"
+        android:visibility="gone"
         android:textSize="18sp" />
 
     <View
@@ -61,6 +62,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:hint="votre reponse"
+        android:visibility="gone"
         android:id="@+id/txtreponse"
         android:textAlignment="viewStart" />
 
@@ -69,8 +71,8 @@
         android:id="@+id/voirReponse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:text="voir reponse"
+        android:visibility="gone"
+        android:text="SEE THE ANSWER"
 
         />
 

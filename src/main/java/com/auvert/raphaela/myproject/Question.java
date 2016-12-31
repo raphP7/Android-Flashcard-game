@@ -31,21 +31,19 @@ import android.widget.Toast;
 
 public class Question extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>  {
 
+    private final String TAG ="QUESTION";
+
     public TextView txtDeckAndCard;
     public TextView txtQuestion;
     public EditText reponseUtilisateur;
     public Button voirReponse;
     public String reponseOfCard;
     public String authority;
-
     public  TextView timeShow;
-
     public ProgressBar progressBar;
     public int idCARD;
-
     public int dificulty;
-
-
+    CountDownTimer countDownTimer;
 
     @Override
     public void onResume()
@@ -54,6 +52,7 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         Log.d("Question","onResume");
         getLoaderManager().restartLoader(1, null, this);
     }
+
 
     public boolean testPreference(){
 
@@ -68,6 +67,8 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         return  activer;
     }
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +77,15 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
             testPreference();
             LoaderManager manager = getLoaderManager();
             manager.initLoader(1, null, this);
+        }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        if(countDownTimer!=null){
+            Log.d(TAG,"destroy countDownTimer");
+            countDownTimer.cancel();
         }
     }
 
@@ -106,23 +116,11 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         timeShow= (TextView ) rootView.findViewById(R.id.timeShow);
 
         progressBar =(ProgressBar) rootView.findViewById(R.id.progressBar);
-        if(testPreference()){
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.setMax(((MainActivity) getActivity() ).timeForQuestion);
-            timeShow.setVisibility(View.VISIBLE);
-        }else{
-            progressBar.setVisibility(View.GONE);
-        }
-
-
-
         txtDeckAndCard= (TextView ) rootView.findViewById(R.id.deckAndCarTitle);
         txtQuestion= (TextView ) rootView.findViewById(R.id.laQuestion);
         reponseUtilisateur =(EditText) rootView.findViewById(R.id.txtreponse);
         reponseUtilisateur.requestFocus();
-        reponseUtilisateur.setVisibility(View.GONE);
         voirReponse= (Button) rootView.findViewById(R.id.voirReponse);
-        voirReponse.setVisibility(View.GONE);
         voirReponse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,7 +134,11 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
 
     public void callReponse(View view) {
 
-        if(reponseOfCard==null || reponseOfCard.length()==0){
+        if(countDownTimer!=null){
+            countDownTimer.cancel();
+        }
+
+        if(reponseOfCard==null || reponseUtilisateur==null || reponseOfCard.length()==0){
             showNOQUESTION();
             return;
         }
@@ -147,7 +149,7 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         args.putLong("idCard", this.idCARD);
 
         String n = reponseUtilisateur.getText().toString();
-        if (n.length() > 0 && reponseOfCard.equals(n)) {
+        if ( n.length() > 0 && reponseOfCard.equals(n)) {
             args.putBoolean("reponse", true);
         }
         else{
@@ -162,8 +164,13 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         imm.hideSoftInputFromWindow(view.getWindowToken(),0);
 
         fragment.setArguments(args);
-        FragmentManager fragmentManager = getActivity().getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        if(getActivity()!=null){
+            FragmentManager fragmentManager = getActivity().getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        }else{
+            Log.d(TAG,"RETRY !!");
+        }
+
 
     }
 
@@ -178,19 +185,37 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
     }
 
     public  void setQuestionTxt(String strQuestion){
+
         txtQuestion.setText(strQuestion);
+        txtQuestion.setVisibility(View.VISIBLE);
         reponseUtilisateur.setVisibility(View.VISIBLE);
         voirReponse.setVisibility(View.VISIBLE);
+        if(testPreference()){
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setMax(((MainActivity) getActivity() ).timeForQuestion);
+            timeShow.setVisibility(View.VISIBLE);
+        }else{
+            timeShow.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+        }
 
         final int time=((MainActivity) getActivity()).timeForQuestion;
-        CountDownTimer countDownTimer = new CountDownTimer(time*1000,100) {
+
+        countDownTimer = new CountDownTimer(time*1000,100) {
             private boolean warned = false;
             private int value=0;
+            String toShow;
+
             @Override
             public void onTick(long millisUntilFinished_) {
                 int allowTime=(int) ((time-millisUntilFinished_)/time*100.0);
-                progressBar.setProgress(allowTime);
-                timeShow.setText("TIME : "+allowTime/5000);
+                if(progressBar!=null){
+                    progressBar.setProgress(allowTime);
+                }
+                if(timeShow!=null){
+                    toShow="TIME : "+Math.abs(allowTime/5000);
+                    timeShow.setText(toShow);
+                }
             }
 
             @Override
@@ -223,10 +248,12 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
 
         return new CursorLoader(getActivity(), builder.build(),
                 new String[]{"_id", "title", "question", "reponse","niveau"},
-                "deck_id=" + ((MainActivity)getActivity()).getIdDeckInUse() +" AND niveau>0 AND "+requestData, null, null);
+                "deck_id=" + ((MainActivity)getActivity()).getIdDeckInUse() +" AND niveau>0 AND "+requestData, null, "_id LIMIT 1");
     }
 
     public  void showNOQUESTION(){
+
+        txtDeckAndCard.setText("NO AVAILABLE QUESTION");
         Toast toast = Toast.makeText(getActivity(), getString(R.string.NoAvailableQuestion), Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();

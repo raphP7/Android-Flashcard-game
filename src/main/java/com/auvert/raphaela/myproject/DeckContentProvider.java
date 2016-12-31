@@ -145,6 +145,7 @@ public class DeckContentProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = helper.getReadableDatabase();
         int code = matcher.match(uri);
+
         Cursor cursor;
         switch (code) {
             case DECK:
@@ -163,11 +164,11 @@ public class DeckContentProvider extends ContentProvider {
                 break;
             case CARDS_OF_ONE_DECK:
                 long id = ContentUris.parseId(uri);
+                Log.d("IN QUERY","sort "+sortOrder);
                 Log.d(" DANS DB ->  ",""+id);
 
                 cursor = db.query("card_table", new String[]{"_id", "title","question","reponse","niveau","date"},
-                        selection, selectionArgs, null, null, null);
-
+                        selection, selectionArgs, null, null, sortOrder);
 
                 break;
             default:
