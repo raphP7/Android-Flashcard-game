@@ -63,8 +63,15 @@ public class Telecharger extends Fragment {
         newValueTxt= (TextView) rootView.findViewById(R.id.newDeckValueTxt);
         newValueEnter= (EditText) rootView.findViewById(R.id.newDeckValueEnter);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar2);
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(rootView.getWindowToken(),0);
+
+
+        if(getActivity()!=null){
+            if(getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)!=null){
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(rootView.getWindowToken(),0);
+            }
+        }
+
 
         if(!((MainActivity) getActivity()).downloadInProgress){
             newValueButton.setText(R.string.Download);
@@ -84,8 +91,13 @@ public class Telecharger extends Fragment {
             @Override
             public void onClick(View v) {
 
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(),0);
+                if(getActivity()!=null){
+                    if(getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)!=null){
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(),0);
+                    }
+                }
+
                 ((MainActivity) getActivity()).downloadInProgress=true;
                 mWorkFragment.doDownload(v);
             }
@@ -166,8 +178,14 @@ public class Telecharger extends Fragment {
                 if (getTargetFragment() != null && getTargetFragment().getView()!=null) {
                     Log.d("retainFragment", "recuperation layoutss");
 
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getTargetFragment().getView().getWindowToken(),0);
+
+                    if(getActivity()!=null){
+                        if(getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)!=null){
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(getTargetFragment().getView().getWindowToken(),0);
+
+                        }
+                    }
 
                     newValueButton = (Button) getTargetFragment().getView().findViewById(R.id.newDeckValueButton);
                     newValueTxt = (TextView) getTargetFragment().getView().findViewById(R.id.newDeckValueTxt);
@@ -266,16 +284,19 @@ public class Telecharger extends Fragment {
                             final String contentLengthStr=ucon.getHeaderField("content-length");
                             lenghtOfFile = Long.parseLong(contentLengthStr);
                         }
-                        catch(final IOException e1)
+                        catch(final Exception e1)
                         {
                         }
                     }
 
                     Log.d("DONWLOAD","SIZE : "+lenghtOfFile);
 
+                    if(lenghtOfFile==-1){
+                        newValueTxtInUI("DOWNLOAD IN PROGRESS\n "+"SIZE UNKNOW SERVER DONT COMUNICATE IT",newValueTxt);
+                    }
+
                     // download the file
-                    InputStream input = new BufferedInputStream(url.openStream(),
-                            8192);
+                    InputStream input = new BufferedInputStream(url.openStream(), 8192);
 
                     // Output stream
                     String path=getActivity().getFilesDir().getPath().toString();
@@ -292,19 +313,18 @@ public class Telecharger extends Fragment {
                     long lastValue=0;
                     long result;
                     Log.d("AsynkTask","BEFORE READ");
-                    if(lenghtOfFile==-1){
-                        newValueTxtInUI("DOWNLOAD IN PROGRESS\n "+"SIZE UNKNOW SERVER DONT COMUNICATE IT",newValueTxt);
-                    }
+
                     while ((count = input.read(data)) != -1) {
-                        total += count;
-                        result = (total * 100) / lenghtOfFile;
 
-                        if(lastValue!=result && lenghtOfFile!=-1){
-                            publishProgress(("") +result );
-                            newValueTxtInUI("DOWNLOAD IN PROGRESS "+result+"%",newValueTxt);
+                        if(lenghtOfFile!=-1){
+                            total += count;
+                            result = (total * 100) / lenghtOfFile;
+                            if(lastValue!=result){
+                                publishProgress(("") +result );
+                                newValueTxtInUI("DOWNLOAD IN PROGRESS "+result+"%",newValueTxt);
+                            }
+                            lastValue=result;
                         }
-                        lastValue=result;
-
                         // writing data to file
                         output.write(data, 0, count);
                     }

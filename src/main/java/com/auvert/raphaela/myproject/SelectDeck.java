@@ -63,8 +63,13 @@ public class SelectDeck extends Fragment implements LoaderManager.LoaderCallback
 
         View rootView = inflater.inflate(R.layout.layout_listage, container, false);
 
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(rootView.getWindowToken(),0);
+        if(getActivity()!=null){
+            if(getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)!=null){
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                imm.hideSoftInputFromWindow(rootView.getWindowToken(),0);
+            }
+        }
 
         Button CREATE = (Button) rootView.findViewById(R.id.buttonCREATE);
         Button EDIT = (Button) rootView.findViewById(R.id.buttonEDIT);

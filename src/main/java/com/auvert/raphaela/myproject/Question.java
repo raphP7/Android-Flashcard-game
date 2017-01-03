@@ -25,6 +25,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+
 /**
  * Created by Raph on 23/12/2016.
  */
@@ -119,7 +121,7 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         txtDeckAndCard= (TextView ) rootView.findViewById(R.id.deckAndCarTitle);
         txtQuestion= (TextView ) rootView.findViewById(R.id.laQuestion);
         reponseUtilisateur =(EditText) rootView.findViewById(R.id.txtreponse);
-        reponseUtilisateur.requestFocus();
+
         voirReponse= (Button) rootView.findViewById(R.id.voirReponse);
         voirReponse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,8 +162,13 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         args.putInt("niveau",dificulty);
 
 
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        if(getActivity()!=null){
+            if(getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)!=null){
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+            }
+        }
+
 
         fragment.setArguments(args);
         if(getActivity()!=null){
@@ -189,6 +196,7 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         txtQuestion.setText(strQuestion);
         txtQuestion.setVisibility(View.VISIBLE);
         reponseUtilisateur.setVisibility(View.VISIBLE);
+        reponseUtilisateur.requestFocus();
         voirReponse.setVisibility(View.VISIBLE);
         if(testPreference()){
             progressBar.setVisibility(View.VISIBLE);
@@ -248,7 +256,7 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
 
         return new CursorLoader(getActivity(), builder.build(),
                 new String[]{"_id", "title", "question", "reponse","niveau"},
-                "deck_id=" + ((MainActivity)getActivity()).getIdDeckInUse() +" AND niveau>0 AND "+requestData, null, "_id LIMIT 1");
+                "deck_id=" + ((MainActivity)getActivity()).getIdDeckInUse() +" AND niveau>0 AND "+requestData, null, "_id LIMIT 9");
     }
 
     public  void showNOQUESTION(){
@@ -268,25 +276,29 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
             return;
         }
 
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        if(getActivity()!=null){
+            if(getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)!=null){
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+            }
+        }
 
         Log.d("DANS QUESTION ","Taille cursor : "+taille);
 
-        /*
+
         Random r = new Random();
         int Low = 0;
         int result = r.nextInt(taille-Low) + Low;
 
         Log.d("DANS QUESTION "," ALEATOIR CHOISIT : "+result);
-        */
+
         cursor.moveToFirst();
         String textQuestion="";
         String textCard="";
         int cmp=0;
         while (!cursor.isAfterLast()) {
 
-            //if(result==cmp){
+            if(result==cmp){
                 Log.d("DANS QUESTION "," ALEATOIR TROUVER");
                 textCard=cursor.getString(cursor.getColumnIndex("title"));
                 textQuestion=cursor.getString(cursor.getColumnIndex("question"));
@@ -296,9 +308,9 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
 
                 Log.d("VAL PRISE ",""+textCard+" "+textQuestion+" "+reponseOfCard+" "+idCARD);
                 break;
-            //}
-            //cmp++;
-            //cursor.moveToNext();
+            }
+            cmp++;
+            cursor.moveToNext();
         }
         setQuestionTxt(textQuestion);
         setCardTxt(textCard);

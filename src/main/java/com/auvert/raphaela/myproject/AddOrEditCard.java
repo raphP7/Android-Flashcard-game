@@ -282,8 +282,12 @@ public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallb
             return;
         }
 
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        if(getActivity()!=null){
+            if(getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)!=null){
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+            }
+        }
 
         cursor.moveToFirst();
         String textQuestion="";

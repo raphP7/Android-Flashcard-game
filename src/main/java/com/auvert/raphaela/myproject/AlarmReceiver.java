@@ -97,7 +97,7 @@ public class AlarmReceiver extends BroadcastReceiver  {
         mBuilder.setContentIntent(resultPendingIntent);
         int mNotificationId = 1;
 
-        mNotifyMgr.cancel(mNotificationId);
+        //mNotifyMgr.cancel(mNotificationId);
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
 
     }

@@ -61,8 +61,12 @@ public class AjouterDeck extends Fragment {
             }
         });
 
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        if(getActivity()!=null){
+            if(getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)!=null){
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+            }
+        }
 
         return rootView;
     }
@@ -97,8 +101,13 @@ public class AjouterDeck extends Fragment {
             return;
         }
 
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        if(getActivity()!=null){
+            if(getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)!=null){
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+            }
+        }
+
 
             Toast toast = Toast.makeText(getActivity(),getString(R.string.NewDeck)+" "+n+" "+getString(R.string.Create), Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);

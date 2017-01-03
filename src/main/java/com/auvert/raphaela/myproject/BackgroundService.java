@@ -83,15 +83,16 @@ public class BackgroundService extends Service implements SharedPreferences.OnSh
                     synchronized (mutex) {
                         try {
                             int value=timeValuePref*1000*60;
-                            if(timeValuePref>0){
-                                scheduleNotification(value);
-                            }
                             Log.d(TAG, "pref GO ON WAIT");
                             mutex.wait(value);
                             if (prefChange) {
                                 Log.d(TAG, "pref CHANGED OUT OF WAIT");
                                 manager.cancel(contentIntent);
                                 prefChange = false;
+                            }
+                            if(timeValuePref>0){
+                                Log.d(TAG, "call scheduleNotification");
+                                scheduleNotification(value);
                             }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -103,10 +104,9 @@ public class BackgroundService extends Service implements SharedPreferences.OnSh
     }
 
     private void scheduleNotification(int value) {
-        Log.d(TAG, "new alarm");
+        Log.d(TAG, "new alarm !! -> "+value);
 
-        manager.set(RTC, System.currentTimeMillis()+value, contentIntent);
-
+        manager.set(RTC, System.currentTimeMillis(), contentIntent);
     }
 
 

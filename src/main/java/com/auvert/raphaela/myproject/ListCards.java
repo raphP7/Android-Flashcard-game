@@ -56,8 +56,12 @@ public class ListCards extends Fragment implements LoaderManager.LoaderCallbacks
 
         View rootView = inflater.inflate(R.layout.layout_listage, container, false);
 
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(rootView.getWindowToken(),0);
+        if(getActivity()!=null){
+            if(getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)!=null){
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+            }
+        }
 
 
         Button CREATE= (Button) rootView.findViewById(R.id.buttonCREATE);
