@@ -10,6 +10,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,9 +29,30 @@ public class ListCards extends Fragment implements LoaderManager.LoaderCallbacks
     private String authority ;
     private SimpleCursorAdapter listAdapter;
     private ListView listView;
+    private Button NEXT;
+    private int offset;
 
     public ListCards() {
         // Empty constructor required for fragment subclasses
+    }
+
+
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("offset", offset);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState!=null){
+            offset = savedInstanceState.getInt("offset");
+            Log.d("ONACTIVI ","offset recuperer :  "+offset);
+        }
+
+
     }
 
     @Override
@@ -54,16 +76,20 @@ public class ListCards extends Fragment implements LoaderManager.LoaderCallbacks
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        offset = getArguments().getInt("offset");
+        Log.d("ONCREATE ","offset recuperer :  "+offset);
+
         View rootView = inflater.inflate(R.layout.layout_listage, container, false);
 
         if(getActivity()!=null){
             if(getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)!=null){
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                imm.hideSoftInputFromWindow(rootView.getWindowToken(),0);
             }
         }
 
-
+        NEXT= (Button) rootView.findViewById(R.id.buttonNEXT);
+        NEXT.setVisibility(View.VISIBLE);
         Button CREATE= (Button) rootView.findViewById(R.id.buttonCREATE);
         Button EDIT= (Button) rootView.findViewById(R.id.buttonEDIT);
         Button DELETE = (Button) rootView.findViewById(R.id.buttonDELETE);
@@ -72,6 +98,23 @@ public class ListCards extends Fragment implements LoaderManager.LoaderCallbacks
         CREATE.setText(createStr);
         EDIT.setText(R.string.EditSelectCard);
         DELETE.setText(R.string.DeleteSelectCard);
+
+        NEXT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Fragment listCardNext=new ListCards();
+
+                Bundle args = new Bundle();
+                offset++;
+                args.putInt("offset", offset);
+
+                listCardNext.setArguments(args);
+                FragmentManager fragmentManager = getActivity().getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.content_frame,listCardNext ).commit();
+
+            }
+        });
 
         CREATE.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,9 +208,17 @@ public class ListCards extends Fragment implements LoaderManager.LoaderCallbacks
 
         ContentUris.appendId(builder,((MainActivity)getActivity()).getIdDeckInUse());
 
+        String sortOrder="_id LIMIT 102 ";
+        if(offset>0){
+            int tmp=offset*100;
+            sortOrder+=" OFFSET "+tmp;
+        }
+
+
         return new CursorLoader(getActivity(), builder.build(),
                 new String[]{"_id", "title","date"},
-                "deck_id=" + ((MainActivity)getActivity()).getIdDeckInUse(), null, null);
+                "deck_id=" + ((MainActivity)getActivity()).getIdDeckInUse(), null, sortOrder);
+
     }
 
     @Override

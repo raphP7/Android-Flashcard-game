@@ -138,6 +138,7 @@ public class SelectDeck extends Fragment implements LoaderManager.LoaderCallback
     {
         super.onResume();
         getLoaderManager().restartLoader(0, null, this);
+
     }
 
 

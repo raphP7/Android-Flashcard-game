@@ -55,6 +55,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/Delete" />
 
+            <Button
+                android:id="@+id/buttonNEXT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="NEXT" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="5dp"

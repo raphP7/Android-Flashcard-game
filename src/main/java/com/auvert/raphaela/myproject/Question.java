@@ -45,6 +45,8 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
     public ProgressBar progressBar;
     public int idCARD;
     public int dificulty;
+    public int timeBetween;
+    public int timeQuestion;
     CountDownTimer countDownTimer;
 
     @Override
@@ -53,6 +55,7 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         super.onResume();
         Log.d("Question","onResume");
         getLoaderManager().restartLoader(1, null, this);
+        testPreference();
     }
 
 
@@ -61,11 +64,15 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         boolean activer=preferences.getBoolean("checkBoxTime",false);
         if(activer){
-            ((MainActivity) getActivity() ).timeForQuestion=Integer.parseInt(preferences.getString("editTextTime"," "));
+            timeQuestion=Integer.parseInt(preferences.getString("editTextTime"," "));
         }else{
-            ((MainActivity) getActivity() ).timeForQuestion=-1;
+            timeQuestion=-1;
         }
         Log.d("Question","TestPreference , retour :"+activer);
+
+        timeBetween= Integer.parseInt(preferences.getString("timeBetweenDificulty",""));
+
+        Log.d("Question","TIME BETWEEN ="+timeBetween);
         return  activer;
     }
 
@@ -200,14 +207,14 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         voirReponse.setVisibility(View.VISIBLE);
         if(testPreference()){
             progressBar.setVisibility(View.VISIBLE);
-            progressBar.setMax(((MainActivity) getActivity() ).timeForQuestion);
+            progressBar.setMax(timeQuestion);
             timeShow.setVisibility(View.VISIBLE);
         }else{
             timeShow.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
         }
 
-        final int time=((MainActivity) getActivity()).timeForQuestion;
+        final int time=timeQuestion;
 
         countDownTimer = new CountDownTimer(time*1000,100) {
             private boolean warned = false;
@@ -216,12 +223,16 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
 
             @Override
             public void onTick(long millisUntilFinished_) {
-                int allowTime=(int) ((time-millisUntilFinished_)/time*100.0);
+
+                int tmp= (int) (timeQuestion-(millisUntilFinished_/1000));
+
+                int count=timeQuestion-tmp;
+
                 if(progressBar!=null){
-                    progressBar.setProgress(allowTime);
+                    progressBar.setProgress(Math.abs(tmp));
                 }
                 if(timeShow!=null){
-                    toShow="TIME : "+Math.abs(allowTime/5000);
+                    toShow="TIME : "+count;
                     timeShow.setText(toShow);
                 }
             }
@@ -249,9 +260,17 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
                 .appendPath("deck");
         ContentUris.appendId(builder,((MainActivity)getActivity()).getIdDeckInUse());
         long date=System.currentTimeMillis();
-        long milli=86400000;
+
+        testPreference();
+
+        long milli=60*1000*timeBetween;
+
+        //long milli=86400000;
+
+        Log.d("SELECT QUESTION ", "TIME LIMIT = "+timeBetween+" donc -> "+milli);
 
         String requestData=" "+date+"> date + (niveau*"+milli+" )";
+
 
 
         return new CursorLoader(getActivity(), builder.build(),
@@ -283,6 +302,7 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
             }
         }
 
+
         Log.d("DANS QUESTION ","Taille cursor : "+taille);
 
 
@@ -298,6 +318,8 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
         int cmp=0;
         while (!cursor.isAfterLast()) {
 
+            //cursor.moveToPosition();
+
             if(result==cmp){
                 Log.d("DANS QUESTION "," ALEATOIR TROUVER");
                 textCard=cursor.getString(cursor.getColumnIndex("title"));
@@ -311,6 +333,7 @@ public class Question extends Fragment implements LoaderManager.LoaderCallbacks<
             }
             cmp++;
             cursor.moveToNext();
+
         }
         setQuestionTxt(textQuestion);
         setCardTxt(textCard);

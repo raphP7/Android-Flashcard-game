@@ -181,7 +181,8 @@ public class AddOrEditCard extends Fragment implements LoaderManager.LoaderCallb
         }
 
 
-        long valueDate= System.currentTimeMillis()-86400000;
+        //-86400000
+        long valueDate= System.currentTimeMillis();
 
         setTxtDate(valueDate);
         setDificulty(dificulty);

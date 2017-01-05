@@ -13,11 +13,11 @@
     <EditTextPreference
         android:key="editTextTime"
         android:id="@+id/timeValue"
-        android:dialogTitle="Definir limite de temps"
+        android:dialogTitle="Definir limite de temps de Question"
         android:positiveButtonText="Valider"
         android:negativeButtonText="Annuler"
-        android:title="Choisir limite de temps"
-        android:defaultValue="10"
+        android:title="Definir limite temps Questions"
+        android:defaultValue="15"
         android:summary="secondes"
         android:inputType="number"
         android:singleLine="true"
@@ -30,11 +30,25 @@
         android:positiveButtonText="Valider"
         android:negativeButtonText="Annuler"
         android:title="Choisir interval notification"
-        android:defaultValue="5"
+        android:defaultValue="2"
         android:summary="en minutes"
         android:inputType="number"
         android:singleLine="true"
          />
+
+    <EditTextPreference
+        android:key="timeBetweenDificulty"
+        android:id="@+id/timeBetweenDificulty"
+        android:dialogTitle="Definir temps d'attente entre difficultés"
+        android:positiveButtonText="Valider"
+        android:negativeButtonText="Annuler"
+        android:title="Choisir interval entre difficultés"
+        android:defaultValue="1440"
+        android:summary="en minutes"
+        android:inputType="number"
+        android:singleLine="true"
+        />
+
 
 
 </PreferenceScreen>
